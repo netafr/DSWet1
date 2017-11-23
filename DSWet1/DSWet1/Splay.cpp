@@ -1,13 +1,23 @@
-#include <stdlib.h>
-#include <iostream>
-#include "Splay.h"
-
-using namespace std;
-
-
-
-	void SplayTree::Zig(Node* x) {
-		Node* y = x->parent;
+#ifndef _SPLAY_
+#define _SPLAY_
+template <class T>
+class Node {
+	public:
+		Node<T>* left;
+		Node<T>* right;
+		Node<T>* parent;
+		T data;
+		Node<T>(const T& data) : data(data) {
+			left = nullptr;
+			right = nullptr;
+			parent = nullptr;
+		}
+};
+template <class T>
+class SplayTree {	
+	Node<T>* root;
+	void Zig(Node<T>* x) {
+		Node<T>* y = x->parent;
 		y->left = x->right;
 		x->right = y;
 		x->parent = y->parent;
@@ -21,9 +31,8 @@ using namespace std;
 		}
 		y->parent = x;
 	}
-
-	void SplayTree::Zag(Node* x) {
-		Node* y = x->parent;
+	void Zag(Node<T>* x) {
+		Node<T>* y = x->parent;
 		y->right = x->left;
 		x->left = y;
 		x->parent = y->parent;
@@ -36,19 +45,17 @@ using namespace std;
 			}
 		}
 		y->parent = x;
-		
 	}
-
-	void SplayTree::Splay(Node* x) {
+	void Splay(Node<T>* x) {
 		if (!root || x == root || !x) {
 			return;
 		}
 		while (true) {
-			Node* parent = x->parent;
+			Node<T>* parent = x->parent;
 			if (!parent) {
 				break;
 			}
-			Node* grandParent = parent->parent;
+			Node<T>* grandParent = parent->parent;
 			if (!grandParent) {
 				//Zig
 				if (parent->left == x) {
@@ -87,28 +94,27 @@ using namespace std;
 		}
 		root = x;
 	}
-
-	SplayTree::SplayTree() {
-			root = NULL;
+	public:
+		SplayTree<T>() {
+			root = nullptr;
 		}
-
-	bool SplayTree::Insert(int key) {
-			Node* x = (Node*)malloc(sizeof(*x));	
+		Node<T>* GetRoot() {
+			return this->root;
+		}
+		bool Insert(const T& newData) {
+			Node<T>* x = new Node<T>(newData);
 			if (!x) {
 				return false;
 			}
-			x->key = key;
-			x->left = NULL;
-			x->right = NULL;
-			x->parent = NULL;
+
 			if (!root) {
 				root = x;
 				return true;
 			}
-			Node* tempRoot = root;
+			Node<T>* tempRoot = root;
 			while (true)
 			{
-				if (x->key < tempRoot->key) {
+				if (x->data < tempRoot->data) {
 					if (!tempRoot->left) {
 						tempRoot->left = x;
 						x->parent = tempRoot;
@@ -117,7 +123,7 @@ using namespace std;
 					else {
 						tempRoot = tempRoot->left;
 					}
-				} 
+				}
 				else {
 					if (!tempRoot->right) {
 						tempRoot->right = x;
@@ -133,14 +139,13 @@ using namespace std;
 			Splay(x);
 			return true;
 		}
-
-	SplayTree::Node* SplayTree::Find(int key) {
-			Node* tempRoot = root;
+		Node<T>* Find(const T& toFind) {
+			Node<T>* tempRoot = root;
 			while (tempRoot) {
-				if (key == tempRoot->key) {
+				if (toFind == tempRoot->data) {
 					break;
 				}
-				else if (key < tempRoot->key) {
+				else if (toFind < tempRoot->data) {
 					tempRoot = tempRoot->left;
 				}
 				else {
@@ -151,54 +156,56 @@ using namespace std;
 			if (root == tempRoot) {
 				return root;
 			}
-			return NULL;
+			return nullptr;
 		}
-
-	bool SplayTree::Delete(int key) {
-			Node* toDelete = Find(key);
+		bool Delete(const T& toFind) {
+			Node<T>* toDelete = Find(toFind);
 			if (!toDelete) {
 				return false;
 			}
 			if (!toDelete->left && !toDelete->right) {
-				root = NULL;
-				free(toDelete);
+				root = nullptr;
+				delete(toDelete);
 			}
 			else if (!toDelete->left && toDelete->right) {
 				root = toDelete->right;
-				free(toDelete);
+				delete(toDelete);
 			}
 			else if (toDelete->left && !toDelete->right) {
 				root = toDelete->left;
-				free(toDelete);
-			} 
+				delete(toDelete);
+			}
 			else {
-				Node* newRoot = toDelete->left;
+				Node<T>* newRoot = toDelete->left;
 				if (!newRoot->right) {
-					newRoot->parent = NULL;
+					newRoot->parent = nullptr;
 					newRoot->right = toDelete->right;
 					toDelete->right->parent = newRoot;
 					root = newRoot;
-					free(toDelete);
+					delete(toDelete);
 					return true;
 				}
 				while (newRoot->right) {
 					newRoot = newRoot->right;
 				}
-				newRoot->parent->right = NULL;
-				newRoot->parent = NULL;
+				newRoot->parent->right = nullptr;
+				newRoot->parent = nullptr;
 				newRoot->right = toDelete->right;
 				toDelete->right->parent = newRoot;
 				newRoot->left = toDelete->left;
 				toDelete->left->parent = newRoot;
 				root = newRoot;
-				free(toDelete);
+				delete(toDelete);
 			}
 			return true;
 		}
-
-	void SplayTree::Inorder(Node* root) {
+		void Inorder(Node<T>* root) {
 			if (!root) return;
 			Inorder(root->left);
-			cout << root->key << "  ";
+			cout << root->data << "  ";
 			Inorder(root->right);
 		}
+};
+
+#endif
+
