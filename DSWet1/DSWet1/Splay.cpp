@@ -12,6 +12,10 @@ class Node {
 			right = nullptr;
 			parent = nullptr;
 		}
+		~Node<T>() {
+			delete left;
+			delete right;
+		}
 };
 template <class T>
 class SplayTree {	
@@ -182,6 +186,8 @@ class SplayTree {
 					newRoot->right = toDelete->right;
 					toDelete->right->parent = newRoot;
 					root = newRoot;
+					toDelete->left = nullptr;
+					toDelete->right = nullptr;
 					delete(toDelete);
 					return true;
 				}
@@ -204,6 +210,9 @@ class SplayTree {
 			Inorder(root->left);
 			cout << root->data << "  ";
 			Inorder(root->right);
+		}
+		~SplayTree() {
+			delete root;
 		}
 };
 
