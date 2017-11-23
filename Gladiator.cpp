@@ -4,52 +4,52 @@
 
 #include "Gladiator.h"
 #include <iostream>
-#include "Gladiator.h"
 
-Gladiator::Gladiator(int gladiatorID, int trainerID, int level, Gladiator* ptr,
-                     bool compareByLevel) :
-        gladiatorID(gladiatorID), trainerID(trainerID), level(level), ptr(ptr),
-        compareByLevel(compareByLevel) {}
+Gladiator::Gladiator(int gladiatorID, int trainerID, int level, SplayTree<Gladiator>* ptr,
+	bool compareByLevel) :
+	gladiatorID(gladiatorID), trainerID(trainerID), level(level), ptr(ptr),
+	compareByLevel(compareByLevel) {}
 
 int Gladiator::GetGladiatorID() const {
-    return gladiatorID;
+	return gladiatorID;
 }
 int Gladiator::GetTrainderID() const {
-    return trainerID;
+	return trainerID;
 }
 int Gladiator::GetLevel() const {
-    return level;
+	return level;
 }
-Gladiator* Gladiator::GetPointer() const {
-    return ptr;
+SplayTree<Gladiator>* Gladiator::GetPointer() const {
+	return ptr;
 }
 void Gladiator::SetGladiatorID(int id) {
-    gladiatorID = id;
+	gladiatorID = id;
 }
 void Gladiator::SetTrainderID(int id) {
-    trainerID = id;
+	trainerID = id;
 }
 void Gladiator::SetLevel(int level) {
-    level = level;
+	level = level;
 }
-void Gladiator::SetPointer(Gladiator* pointer) {
-    ptr = pointer;
+void Gladiator::SetPointer(SplayTree<Gladiator>* pointer) {
+	ptr = pointer;
 }
 bool Gladiator::operator==(const Gladiator& gladiator) const {
-    return gladiatorID == gladiator.GetGladiatorID() &&
-                   trainerID == gladiator.GetTrainderID() &&
-                   level == gladiator.GetLevel() &&ptr == gladiator.GetPointer()
-           && compareByLevel == gladiator.compareByLevel;
+	return gladiatorID == gladiator.GetGladiatorID();
 }
 bool Gladiator::operator<(const Gladiator& gladiator) const {
-    //assuming both blabla same bool blabla
-    if (compareByLevel) {
-        if (level == gladiator.GetLevel())
-            return gladiatorID < gladiator.GetGladiatorID();
-        return level < gladiator.GetLevel();
-    }
-    return gladiatorID < gladiator.GetGladiatorID();
+	//assuming both blabla same bool blabla
+	if (compareByLevel) {
+		if (level == gladiator.GetLevel())
+			return gladiatorID < gladiator.GetGladiatorID();
+		return level < gladiator.GetLevel();
+	}
+	return gladiatorID < gladiator.GetGladiatorID();
 }
 bool Gladiator::operator>(const Gladiator& gladiator) const {
-    return gladiator < (*this);
+	return gladiator < (*this);
+}
+std::ostream& operator<<(std::ostream& output, const Gladiator& glad) {
+	output << glad.GetGladiatorID();
+	return output;
 }
